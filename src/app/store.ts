@@ -1,17 +1,15 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
+
+import counterReducer from '../features/counter/counterSlice'
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
-  },
-});
+    counter: counterReducer
+  }
+})
 
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
+export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>
+// TODO: Посмотреть типы, разобраться с es lint
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>
