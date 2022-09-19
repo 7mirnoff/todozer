@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { TaskContainer } from '../features/components/task-container'
+import { TaskContainerList } from '../features/components/task-container-list/task-container-list'
 
 export const BoardPage: React.FC = () => {
   return (
     <div>
-      <TaskContainer />
+      <TaskContainerList />
     </div>
   )
 }
