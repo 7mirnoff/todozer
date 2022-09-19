@@ -1,12 +1,14 @@
 import React from 'react'
+import 'antd/dist/antd.min.css'
+import './assets/scss/main.scss'
 
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
 
-import App from './App'
-import { store } from './app/store'
+import App from './app'
 import reportWebVitals from './reportWebVitals'
-import './main.css'
+import { store } from './store/store'
 
 const container = document.getElementById('root')!
 const root = createRoot(container)
@@ -14,7 +16,9 @@ const root = createRoot(container)
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>
 )
