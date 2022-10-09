@@ -1,12 +1,14 @@
 import { Action, combineReducers, configureStore, ThunkAction } from '@reduxjs/toolkit'
-import columnReducer from './reducers/columns-slice'
+
+import { boardAPI } from '../features/services/board-service'
 
 const rootReducer = combineReducers({
-  columnReducer
+  [boardAPI.reducerPath]: boardAPI.reducer
 })
 
 export const store = configureStore({
-  reducer: rootReducer
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(boardAPI.middleware)
 })
 
 export type AppDispatch = typeof store.dispatch

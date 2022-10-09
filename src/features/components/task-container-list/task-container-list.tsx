@@ -18,11 +18,11 @@ import {
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable'
 import { createPortal } from 'react-dom'
 
+import { boardAPI } from '../../services/board-service'
 import { SortableContainer } from '../dnd/sortable-container'
 import { TaskContainer } from '../task-container/task-container'
 import { TaskItem } from '../task-item/task-item'
 import styles from './task-container-list.module.scss'
-import { useAppSelector } from '../../../store/hooks'
 
 const measuring: MeasuringConfiguration = {
   droppable: {
@@ -41,7 +41,8 @@ const dropAnimation: DropAnimation = {
 }
 
 export const TaskContainerList: React.FC = () => {
-  const { columns, isLoading, error } = useAppSelector((state) => state.columnReducer)
+  const { data: columns, error, isLoading } = boardAPI.useFetchAllColumnsQuery(null)
+  console.log(columns, error, isLoading)
 
   const [items, setItems] = useState<UniqueIdentifier[]>(['1', '2', '3', '4'])
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
