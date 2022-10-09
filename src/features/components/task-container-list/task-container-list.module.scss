@@ -1,9 +1,13 @@
 .taskContainerList {
   display: flex;
-  padding: 20px;
+  margin: 20px;
   overflow: scroll;
 }
 
 .taskContainerItem {
   padding: 12px;
+}
+
+.active {
+  color: red;
 }

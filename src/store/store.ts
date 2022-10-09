@@ -1,7 +1,12 @@
-import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
+import { Action, combineReducers, configureStore, ThunkAction } from '@reduxjs/toolkit'
+import columnReducer from './reducers/columns-slice'
+
+const rootReducer = combineReducers({
+  columnReducer
+})
 
 export const store = configureStore({
-  reducer: {}
+  reducer: rootReducer
 })
 
 export type AppDispatch = typeof store.dispatch
