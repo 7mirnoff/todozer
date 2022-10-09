@@ -18,14 +18,15 @@ export const SortableContainer: React.FC<ISortableContainer> = ({ children, id }
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
       style={{
         transition,
         transform: CSS.Translate.toString(transform),
         opacity: isDragging ? 0.5 : undefined
       }}
     >
+      <button {...listeners} {...attributes}>
+        drug
+      </button>
       {children}
     </div>
   )

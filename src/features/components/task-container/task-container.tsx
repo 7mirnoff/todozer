@@ -5,14 +5,14 @@ import { Card } from 'antd'
 import styles from './task-container.module.scss'
 
 interface ITaskContainer {
-  name: string
+  title: React.ReactNode
   children: React.ReactNode
 }
 
-export const TaskContainer: React.FC<ITaskContainer> = ({ name, children }) => {
+export const TaskContainer: React.FC<ITaskContainer> = ({ title, children }) => {
   return (
     <div className={styles.root}>
-      <Card title={`Column-${name}`}>{children}</Card>
+      <Card title={title}>{children}</Card>
     </div>
   )
 }

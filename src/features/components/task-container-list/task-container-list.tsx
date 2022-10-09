@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   closestCenter,
@@ -16,8 +16,10 @@ import {
   useSensors
 } from '@dnd-kit/core'
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable'
+import { Button } from 'antd'
 import { createPortal } from 'react-dom'
 
+import { IColumn } from '../../../models/column'
 import { boardAPI } from '../../services/board-service'
 import { SortableContainer } from '../dnd/sortable-container'
 import { TaskContainer } from '../task-container/task-container'
@@ -41,10 +43,21 @@ const dropAnimation: DropAnimation = {
 }
 
 export const TaskContainerList: React.FC = () => {
-  const { data: columns, error, isLoading } = boardAPI.useFetchAllColumnsQuery(null)
-  console.log(columns, error, isLoading)
+  const { data: columns, error: fetchColumnsError, isLoading } = boardAPI.useFetchAllColumnsQuery(null)
+  const [createColumn, { error: createColumnsError }] = boardAPI.useCreateColumnMutation()
+  const [deleteColumn] = boardAPI.useDeleteColumnMutation()
+  const [updateColumn] = boardAPI.useUpdateColumnMutation()
 
-  const [items, setItems] = useState<UniqueIdentifier[]>(['1', '2', '3', '4'])
+  console.log(columns, fetchColumnsError, isLoading, createColumnsError)
+
+  const [items, setItems] = useState<UniqueIdentifier[]>([])
+
+  useEffect(() => {
+    if (columns) {
+      setItems(columns.map((column) => column.code))
+    }
+  }, [])
+
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
 
   const activeIndex = activeId ? items.indexOf(activeId) : -1
@@ -77,6 +90,24 @@ export const TaskContainerList: React.FC = () => {
     setActiveId(null)
   }
 
+  const handleCreateColumn = async (): Promise<void> => {
+    const name = prompt()
+    await createColumn({ name } as IColumn)
+  }
+
+  const handleRemoveColumn = async (column: IColumn): Promise<void> => {
+    await deleteColumn(column)
+  }
+
+  const handleUpdateColumn = async (column: IColumn): Promise<void> => {
+    const name = prompt()
+    await updateColumn({ ...column, name: name ?? column.name })
+  }
+
+  if (!columns?.length) {
+    return <div>Нет данных</div>
+  }
+
   return (
     <DndContext
       onDragStart={handleDragStart}
@@ -86,15 +117,31 @@ export const TaskContainerList: React.FC = () => {
       collisionDetection={closestCenter}
       measuring={measuring}
     >
-      <SortableContext items={items} strategy={horizontalListSortingStrategy}>
+      <SortableContext items={columns.map((column) => column.code)} strategy={horizontalListSortingStrategy}>
         <div className={styles.taskContainerList}>
-          {items.map((item) => {
+          {columns.map((column) => {
             return (
-              <SortableContainer key={item} id={item}>
+              <SortableContainer key={column.code} id={column.code}>
                 <div className={styles.taskContainerItem}>
-                  <TaskContainer name={`${item}`}>
+                  <TaskContainer title={`Column-${column.name}`}>
                     <TaskItem />
                     <TaskItem />
+                    <Button
+                      onClick={(evt) => {
+                        console.log(evt)
+                        evt.stopPropagation()
+                        void handleRemoveColumn(column)
+                      }}
+                    >
+                      Remove new column
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        void handleUpdateColumn(column)
+                      }}
+                    >
+                      Update new column
+                    </Button>
                   </TaskContainer>
                 </div>
               </SortableContainer>
@@ -105,13 +152,14 @@ export const TaskContainerList: React.FC = () => {
       {createPortal(
         <DragOverlay adjustScale={false} dropAnimation={dropAnimation}>
           {activeId ? (
-            <TaskContainer name={`${activeId}`}>
+            <TaskContainer title={`Column-${activeId}`}>
               <TaskItem />
             </TaskContainer>
           ) : null}
         </DragOverlay>,
         document.body
       )}
+      <Button onClick={handleCreateColumn}>Add new column</Button>
     </DndContext>
   )
 }
